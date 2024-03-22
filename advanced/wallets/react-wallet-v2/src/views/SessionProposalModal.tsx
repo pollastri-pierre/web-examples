@@ -240,18 +240,23 @@ export default function SessionProposalModal() {
         return bip122Addresses[0].get(`bip122:${chainId}` || DEFAULT_CHAIN_ID)
     }
   }, [])
-  console.log(proposal.params)
-  const namespaces = buildApprovedNamespaces({
-    proposal: proposal.params,
-    supportedNamespaces
-  })
+
+  const namespaces = useMemo(() => {
+    try {
+      // the builder throws an exception if required namespaces are not supported
+      return buildApprovedNamespaces({
+        proposal: proposal.params,
+        supportedNamespaces
+      })
+    } catch (e) {}
+  }, [proposal.params, supportedNamespaces])
 
   const reorderedEip155Accounts = usePriorityAccounts({ namespaces })
   console.log('Reordrered accounts', { reorderedEip155Accounts })
 
   // Hanlde approve action, construct session namespace
   const onApprove = useCallback(async () => {
-    if (proposal) {
+    if (proposal && namespaces) {
       setIsLoadingApprove(true)
 
       try {

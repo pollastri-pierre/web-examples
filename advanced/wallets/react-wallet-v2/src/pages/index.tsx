@@ -15,7 +15,7 @@ import SettingsStore from '@/store/SettingsStore'
 import { Text } from '@nextui-org/react'
 import { Fragment } from 'react'
 import { useSnapshot } from 'valtio'
-import { isAllowedKernelChain, isAllowedSafeChain } from '@/utils/SmartAccountUtil'
+import useSmartAccounts from '@/hooks/useSmartAccounts'
 
 export default function HomePage() {
   const {
@@ -34,6 +34,7 @@ export default function HomePage() {
     safeSmartAccountAddress,
     smartAccountEnabled
   } = useSnapshot(SettingsStore.state)
+  const { getAvailableSmartAccounts } = useSmartAccounts()
 
   return (
     <Fragment>
@@ -163,29 +164,23 @@ export default function HomePage() {
             if (smartAccountEnabled) {
               return (
                 <div key={`${name}-smart`} style={{ marginBottom: 10 }}>
-                  {isAllowedKernelChain(chainId) ? (
-                    <AccountCard
-                      key={`${name}-kernel`}
-                      name={`Kernel Smart Account \n ${name}`}
-                      logo={logo}
-                      rgb={rgb}
-                      address={kernelSmartAccountAddress}
-                      chainId={caip10.toString()}
-                      data-testid={`chain-card-${caip10.toString()}-kernel`}
-                    />
-                  ) : null}
-
-                  {isAllowedSafeChain(chainId) ? (
-                    <AccountCard
-                      key={`${name}-safe`}
-                      name={`Safe Smart Account \n ${name}`}
-                      logo={logo}
-                      rgb={rgb}
-                      address={safeSmartAccountAddress}
-                      chainId={caip10.toString()}
-                      data-testid={`chain-card-${caip10.toString()}-safe`}
-                    />
-                  ) : null}
+                  {getAvailableSmartAccounts()
+                    .filter(account => {
+                      return account.chain.id === chainId
+                    })
+                    .map(account => {
+                      return (
+                        <AccountCard
+                          key={`${name}-${account.type.toLowerCase()}`}
+                          name={`${account.type} Smart Account \n ${name}`}
+                          logo={logo}
+                          rgb={rgb}
+                          address={account.address}
+                          chainId={caip10.toString()}
+                          data-testid={`chain-card-${caip10.toString()}-${account.type.toLowerCase()}`}
+                        />
+                      )
+                    })}
                 </div>
               )
             }
