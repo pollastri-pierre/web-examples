@@ -9,6 +9,7 @@ import { SolanaChainData } from "../chains/solana";
 import { PolkadotChainData } from "../chains/polkadot";
 import { MultiversxChainData } from "../chains/multiversx";
 import { TronChainData } from "../chains/tron";
+import { Bip122ChainData } from "../chains/bip122";
 
 import { ChainNamespaces, ChainsMap, getAllChainNamespaces } from "../helpers";
 import { NearChainData } from "../chains/near";
@@ -72,6 +73,9 @@ export function ChainDataContextProvider({
             break;
           case "kadena":
             chains = KadenaChainData;
+            break;
+          case "bip122":
+            chains = Bip122ChainData;
             break;
           default:
             console.error("Unknown chain namespace: ", namespace);

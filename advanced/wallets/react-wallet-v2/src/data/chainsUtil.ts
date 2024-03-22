@@ -7,6 +7,7 @@ import { POLKADOT_CHAINS } from './PolkadotData'
 import { SOLANA_CHAINS } from './SolanaData'
 import { TEZOS_CHAINS } from './TezosData'
 import { TRON_CHAINS } from './TronData'
+import { BIP122_CHAINS } from './Bip122Data'
 
 export const ALL_CHAINS = {
   ...EIP155_CHAINS,
@@ -17,7 +18,8 @@ export const ALL_CHAINS = {
   ...POLKADOT_CHAINS,
   ...SOLANA_CHAINS,
   ...TEZOS_CHAINS,
-  ...TRON_CHAINS
+  ...TRON_CHAINS,
+  ...BIP122_CHAINS
 }
 
 export function getChainData(chainId?: string) {

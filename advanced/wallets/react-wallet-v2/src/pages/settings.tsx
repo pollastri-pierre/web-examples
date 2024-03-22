@@ -12,6 +12,7 @@ import { Fragment } from 'react'
 import { useSnapshot } from 'valtio'
 import packageJSON from '../../package.json'
 import { tezosWallets } from '@/utils/TezosWalletUtil'
+import { DEFAULT_CHAIN_ID, bip122Wallets } from '@/utils/Bip122WalletUtil'
 
 export default function SettingsPage() {
   const {
@@ -24,6 +25,7 @@ export default function SettingsPage() {
     tronAddress,
     tezosAddress,
     kadenaAddress,
+    bip122Addresses,
     smartAccountEnabled,
     kernelSmartAccountEnabled,
     safeSmartAccountEnabled
@@ -181,6 +183,13 @@ export default function SettingsPage() {
       </Text>
       <Card bordered borderWeight="light" css={{ wordWrap: 'break-word' }}>
         <Text css={{ fontFamily: '$mono' }}>{kadenaWallets[kadenaAddress].getSecretKey()}</Text>
+      </Card>
+
+      <Text h4 css={{ marginTop: '$10', marginBottom: '$5' }}>
+        BIP122 Mnemonic
+      </Text>
+      <Card bordered borderWeight="light" css={{ wordWrap: 'break-word' }}>
+        <Text css={{ fontFamily: '$mono' }}>{bip122Wallets[bip122Addresses.get(DEFAULT_CHAIN_ID)!].getMnemonic()}</Text>
       </Card>
 
       <Text h4 css={{ marginTop: '$10', marginBottom: '$5' }}></Text>

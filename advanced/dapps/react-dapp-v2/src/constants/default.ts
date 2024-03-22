@@ -19,6 +19,8 @@ export const DEFAULT_MAIN_CHAINS = [
   "tron:0x2b6653dc",
   "tezos:mainnet",
   "kadena:mainnet01",
+  "bip122:000000000019d6689c085ae165831e93",
+  "bip122:12a765e31ffd4059bada1e25190f6e98",
 ];
 
 export const DEFAULT_TEST_CHAINS = [
@@ -38,6 +40,7 @@ export const DEFAULT_TEST_CHAINS = [
   "tron:0xcd8690dc",
   "tezos:testnet",
   "kadena:testnet04",
+  "bip122:000000000933ea01ad0ee984209779ba",
 ];
 
 export const DEFAULT_CHAINS = [...DEFAULT_MAIN_CHAINS, ...DEFAULT_TEST_CHAINS];
@@ -171,6 +174,15 @@ export enum DEFAULT_KADENA_METHODS {
 }
 
 export enum DEFAULT_KADENA_EVENTS {}
+
+/**
+ * BIP122 (bitcoin and forks)
+ */
+export enum DEFAULT_BIP122_METHODS {
+  BIP122_SIGN_MESSAGE = "bip122_signMessage",
+}
+
+export enum DEFAULT_BIP122_EVENTS {}
 
 export const REGIONALIZED_RELAYER_ENDPOINTS: RelayerType[] = [
   {

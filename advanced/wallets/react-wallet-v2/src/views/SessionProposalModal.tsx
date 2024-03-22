@@ -14,6 +14,7 @@ import { tezosAddresses } from '@/utils/TezosWalletUtil'
 import { solanaAddresses } from '@/utils/SolanaWalletUtil'
 import { nearAddresses } from '@/utils/NearWalletUtil'
 import { kadenaAddresses } from '@/utils/KadenaWalletUtil'
+import { DEFAULT_CHAIN_ID, bip122Addresses } from '@/utils/Bip122WalletUtil'
 import { styledToast } from '@/utils/HelperUtil'
 import { web3wallet } from '@/utils/WalletConnectUtil'
 import { EIP155_CHAINS, EIP155_SIGNING_METHODS } from '@/data/EIP155Data'
@@ -25,6 +26,7 @@ import { POLKADOT_CHAINS, POLKADOT_SIGNING_METHODS } from '@/data/PolkadotData'
 import { SOLANA_CHAINS, SOLANA_SIGNING_METHODS } from '@/data/SolanaData'
 import { TEZOS_CHAINS, TEZOS_SIGNING_METHODS } from '@/data/TezosData'
 import { TRON_CHAINS, TRON_SIGNING_METHODS } from '@/data/TronData'
+import { BIP122_CHAINS, BIP122_METHODS } from '@/data/Bip122Data'
 import ChainDataMini from '@/components/ChainDataMini'
 import ChainAddressMini from '@/components/ChainAddressMini'
 import { getChainData } from '@/data/chainsUtil'
@@ -34,6 +36,7 @@ import { useSnapshot } from 'valtio'
 import SettingsStore from '@/store/SettingsStore'
 import usePriorityAccounts from '@/hooks/usePriorityAccounts'
 import useSmartAccounts from '@/hooks/useSmartAccounts'
+import { bitcoin } from 'bitcoinjs-lib/src/networks'
 
 const StyledText = styled(Text, {
   fontWeight: 400
@@ -87,6 +90,10 @@ export default function SessionProposalModal() {
     // tron
     const tronChains = Object.keys(TRON_CHAINS)
     const tronMethods = Object.values(TRON_SIGNING_METHODS)
+
+    // bip122
+    const bip122Chains = Object.keys(BIP122_CHAINS)
+    const bip122Methods = Object.values(BIP122_METHODS)
 
     return {
       eip155: {
@@ -148,6 +155,12 @@ export default function SessionProposalModal() {
         methods: tronMethods,
         events: [],
         accounts: tronChains.map(chain => `${chain}:${tronAddresses[0]}`)
+      },
+      bip122: {
+        chains: bip122Chains,
+        methods: bip122Methods,
+        events: [],
+        accounts: Array.from(bip122Addresses[0].entries()).map(([chain, address]) => `${chain}:${address}`)
       }
     }
   }, [])
@@ -202,7 +215,7 @@ export default function SessionProposalModal() {
       )
   }, [proposal, supportedChains])
   console.log('notSupportedChains', notSupportedChains)
-  const getAddress = useCallback((namespace?: string) => {
+  const getAddress = useCallback((namespace?: string, chainId?: string) => {
     if (!namespace) return 'N/A'
     switch (namespace) {
       case 'eip155':
@@ -223,9 +236,11 @@ export default function SessionProposalModal() {
         return tezosAddresses[0]
       case 'tron':
         return tronAddresses[0]
+      case 'bip122':
+        return bip122Addresses[0].get(`bip122:${chainId}` || DEFAULT_CHAIN_ID)
     }
   }, [])
-
+  console.log(proposal.params)
   const namespaces = buildApprovedNamespaces({
     proposal: proposal.params,
     supportedNamespaces
@@ -320,7 +335,7 @@ export default function SessionProposalModal() {
             supportedChains.map((chain, i) => {
               return (
                 <Row key={i}>
-                  <ChainAddressMini key={i} address={getAddress(chain?.namespace) || 'test'} />
+                  <ChainAddressMini key={i} address={getAddress(chain?.namespace, chain?.chainId) || 'test'} />
                 </Row>
               )
             })}

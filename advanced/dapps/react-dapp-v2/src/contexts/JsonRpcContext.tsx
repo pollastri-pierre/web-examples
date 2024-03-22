@@ -49,6 +49,7 @@ import {
   DEFAULT_TEZOS_METHODS,
   DEFAULT_KADENA_METHODS,
   DEFAULT_EIP155_OPTIONAL_METHODS,
+  DEFAULT_BIP122_METHODS,
 } from "../constants";
 import { useChainData } from "./ChainDataContext";
 import { rpcProvidersByChainId } from "../../src/helpers/api";
@@ -123,6 +124,9 @@ interface IContext {
     testGetAccounts: TRpcRequestCallback;
     testSign: TRpcRequestCallback;
     testQuicksign: TRpcRequestCallback;
+  };
+  bip122Rpc: {
+    testSignMessage: TRpcRequestCallback;
   };
   rpcResult?: IFormattedRpcResponse | null;
   isRpcRequestPending: boolean;
@@ -697,7 +701,7 @@ export function JsonRpcContextProvider({
     testSignMessage: _createJsonRpcRequestHandler(
       async (
         chainId: string,
-        address: string
+        address: string,
       ): Promise<IFormattedRpcResponse> => {
         if (!solanaPublicKeys) {
           throw new Error("Could not find Solana PublicKeys.");
@@ -1484,6 +1488,40 @@ export function JsonRpcContextProvider({
     ),
   };
 
+  const bip122Rpc = {
+    testSignMessage: _createJsonRpcRequestHandler(
+      async (
+        chainId: string,
+        address: string,
+      ): Promise<IFormattedRpcResponse> => {
+        try {
+          const message = "This is a message to be signed for BIP122";
+          const result = await client!.request<string>({
+            chainId,
+            topic: session!.topic,
+            request: {
+              method: DEFAULT_BIP122_METHODS.BIP122_SIGN_MESSAGE,
+              params: {
+                address,
+                message,
+              },
+            },
+          });
+          return {
+            method: DEFAULT_BIP122_METHODS.BIP122_SIGN_MESSAGE,
+            address,
+            valid: true,
+            result: result,
+          };
+        } catch (error: any) {
+          throw new Error(error);
+        }
+      }
+    ),
+  };
+
+
+
   return (
     <JsonRpcContext.Provider
       value={{
@@ -1497,6 +1535,7 @@ export function JsonRpcContextProvider({
         tronRpc,
         tezosRpc,
         kadenaRpc,
+        bip122Rpc,
         rpcResult: result,
         isRpcRequestPending: pending,
         isTestnet,

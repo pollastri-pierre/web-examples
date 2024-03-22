@@ -9,6 +9,7 @@ import { createOrRestoreTronWallet } from '@/utils/TronWalletUtil'
 import { createOrRestoreTezosWallet } from '@/utils/TezosWalletUtil'
 import { createWeb3Wallet, web3wallet } from '@/utils/WalletConnectUtil'
 import { createOrRestoreKadenaWallet } from '@/utils/KadenaWalletUtil'
+import { createOrRestoreBip122Wallets } from '@/utils/Bip122WalletUtil'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import useSmartAccounts from './useSmartAccounts'
@@ -31,6 +32,7 @@ export default function useInitialization() {
       const { tronAddresses } = await createOrRestoreTronWallet()
       const { tezosAddresses } = await createOrRestoreTezosWallet()
       const { kadenaAddresses } = await createOrRestoreKadenaWallet()
+      const { bip122Addresses } = await createOrRestoreBip122Wallets()
       await initializeSmartAccounts(eip155Wallets[eip155Addresses[0]].getPrivateKey())
 
       SettingsStore.setEIP155Address(eip155Addresses[0])
@@ -42,6 +44,11 @@ export default function useInitialization() {
       SettingsStore.setTronAddress(tronAddresses[0])
       SettingsStore.setTezosAddress(tezosAddresses[0])
       SettingsStore.setKadenaAddress(kadenaAddresses[0])
+      bip122Addresses.forEach((addresses, i) => {
+        addresses.forEach((address, chainId) => {
+          SettingsStore.setBip122Address(address, chainId)
+        })
+      })
       await createWeb3Wallet(relayerRegionURL)
       setInitialized(true)
     } catch (err: unknown) {

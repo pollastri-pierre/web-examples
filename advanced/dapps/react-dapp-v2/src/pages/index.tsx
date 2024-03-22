@@ -21,6 +21,7 @@ import {
   DEFAULT_TRON_METHODS,
   DEFAULT_TEZOS_METHODS,
   DEFAULT_EIP155_OPTIONAL_METHODS,
+  DEFAULT_BIP122_METHODS
 } from "../constants";
 import { AccountAction, setLocaleStorageTestnetFlag } from "../helpers";
 import Toggle from "../components/Toggle";
@@ -87,6 +88,7 @@ const Home: NextPage = () => {
     tronRpc,
     tezosRpc,
     kadenaRpc,
+    bip122Rpc,
     isRpcRequestPending,
     rpcResult,
     isTestnet,
@@ -403,6 +405,20 @@ const Home: NextPage = () => {
     ];
   };
 
+  const getBip122Actions = (): AccountAction[] => {
+    const testSignMessage = async (chainId: string, address: string) => {
+      openRequestModal();
+      await bip122Rpc.testSignMessage(chainId, address, "Hello, World!");
+    }
+
+    return [
+      {
+        method: DEFAULT_BIP122_METHODS.BIP122_SIGN_MESSAGE,
+        callback: testSignMessage,
+      }
+    ]
+  }
+
   const getBlockchainActions = (chainId: string) => {
     const [namespace] = chainId.split(":");
     switch (namespace) {
@@ -424,6 +440,8 @@ const Home: NextPage = () => {
         return getTezosActions();
       case "kadena":
         return getKadenaActions();
+      case "bip122":
+        return getBip122Actions();
       default:
         break;
     }
@@ -473,7 +491,6 @@ const Home: NextPage = () => {
 
   const renderContent = () => {
     const chainOptions = isTestnet ? DEFAULT_TEST_CHAINS : DEFAULT_MAIN_CHAINS;
-
     return !accounts.length && !Object.keys(balances).length ? (
       <SLanding center>
         <Banner />

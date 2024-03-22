@@ -6,6 +6,7 @@ import SessionRequestModal from '@/views/SessionSignModal'
 import SessionSignNearModal from '@/views/SessionSignNearModal'
 import SessionSignPolkadotModal from '@/views/SessionSignPolkadotModal'
 import SessionSignSolanaModal from '@/views/SessionSignSolanaModal'
+import SessionSignBip122Modal from '@/views/SessionSignBip122Modal'
 import SessionSignMultiversxModal from '@/views/SessionSignMultiversxModal'
 import SessionSignTronModal from '@/views/SessionSignTronModal'
 import SessionSignTezosModal from '@/views/SessionSignTezosModal'
@@ -55,6 +56,8 @@ export default function Modal() {
         return <SessionSignTezosModal />
       case 'SessionSignKadenaModal':
         return <SessionSignKadenaModal />
+      case 'SessionSignBip122Modal':
+        return <SessionSignBip122Modal />
       case 'AuthRequestModal':
         return <AuthRequestModal />
       case 'LoadingModal':
